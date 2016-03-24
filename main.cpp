@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 
+#define DEBUG true;
+
 using namespace std;
 
 class Customer {
@@ -28,7 +30,7 @@ class Customer {
             }
     
             // rip the integers from the string data
-            void convertPubDate(string data) {
+            void convertBirthDate(string data) {
                 string temp;
                 char c;
                 int count = 0;
@@ -82,7 +84,7 @@ class Customer {
             }
     
             // Used to extract the authors first, middle, and last name
-            void convertAuthor(string data) {
+            void convertName(string data) {
                 string temp;
                 char c;
                 int count = 0;
@@ -110,6 +112,22 @@ class Customer {
         } name;
         float Balance_saving;
         float Balance_checking;
+        
+        /* Used to simplify the stoi call
+        * Will not compile in MinGW v 1.7-1.9
+        */
+        int stringToInt(string data) {
+            size_t *size = 0;
+            return stoi(data, size, 10);
+        }
+
+        /* Used to simplify the stof call
+        * Will not compile in MinGW v 1.7-1.9
+        */
+        float stringToFloat(string data) {
+            size_t *size = 0;
+            return stof(data, size);
+        }
     public:
         /*  Withdraws <amount> with <type>
             type: 0 is savings, 1 is checking
@@ -147,7 +165,7 @@ class Customer {
             }
         }
         
-        /*  Deposits <amount> with <type>
+        /*  Displays <type> to the user
             type: 0 is savings, 1 is checking
         */
         void deposit(int account_type){
@@ -163,6 +181,36 @@ class Customer {
                         cout << "Wrong account type" << endl;
                     break;
             }
+        }
+        
+        void storeData(string data, int type){
+            switch (type){
+                case 0:
+                    date.convertBirthDate(data);
+                    break;
+                case 1:
+                    name.convertName(data);
+                    break;
+                case 2:
+                    Balance_saving = stringToFloat(data);
+                    break;
+                case 3:
+                    Balance_checking = stringToFloat(data);
+                    break;
+                default:
+                    cout << "Error in Account Structure" << endl;
+            }
+        }
+        
+        Customer (Customer customer){
+            Birth_date.month = customer.Birth_date.month;
+            Birth_date.day = customer.Birth_date.day;
+            Birth_date.year = customer.Birth_date.year;
+            Name.First_name = customer.Name.First_name;
+            Name.Middle_name = customer.Name.Middle_name;
+            Name.Last_name = customer.Name.Last_name;
+            Balance_saving = customer.Balance_saving;
+            Balance_checking = customer.Balance_checking;
         }
 }
 
