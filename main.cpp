@@ -201,20 +201,34 @@ class Customer {
                     cout << "Error in Account Structure" << endl;
             }
         }
-        
+        void clear() {
+             Balance_saving = 0;
+             Balance_checking = 0;
+             name.clear();
+             date.clear();
+        }      
         Customer (Customer customer){
-            Birth_date.month = customer.Birth_date.month;
-            Birth_date.day = customer.Birth_date.day;
-            Birth_date.year = customer.Birth_date.year;
-            Name.First_name = customer.Name.First_name;
-            Name.Middle_name = customer.Name.Middle_name;
-            Name.Last_name = customer.Name.Last_name;
+            date.month = customer.Birth_date.month;
+            date.day = customer.Birth_date.day;
+            date.year = customer.Birth_date.year;
+            name.First_name = customer.Name.First_name;
+            name.Middle_name = customer.Name.Middle_name;
+            name.Last_name = customer.Name.Last_name;
             Balance_saving = customer.Balance_saving;
             Balance_checking = customer.Balance_checking;
         }
 }
 
 int main() {
-    
+    ifstream in_file;
+    Customer temp = new Customer();
+    temp.clear();
+    // Opening the file to read the account data from
+    in_file.open("account.dat");
+    string line;
+    int count = 0;
+    do {
+        in_file >> line >> endl;
+         
     return 0;
 }
