@@ -2,7 +2,8 @@
 #include <string>
 #include <fstream>
 
-#define DEBUG true;
+#define DEBUG true
+#define MAX_ACCT 20
 
 using namespace std;
 
@@ -129,6 +130,12 @@ class Customer {
             return stof(data, size);
         }
     public:
+        void clear() {
+            Name.clear();
+            Birth_date.clear();
+            Balance_checking = -1;
+            Balance_saving = -1;            
+        }
         /*  Withdraws <amount> with <type>
             type: 0 is savings, 1 is checking
         */
@@ -183,6 +190,9 @@ class Customer {
             }
         }
         
+        /* Stores data in the format of specification
+            default notifies the user that there was an error
+         */
         void storeData(string data, int type){
             switch (type){
                 case 0:
@@ -216,6 +226,13 @@ class Customer {
             name.Last_name = customer.Name.Last_name;
             Balance_saving = customer.Balance_saving;
             Balance_checking = customer.Balance_checking;
+        }
+        
+        Customer(){
+            clear();
+            if (DEBUG) {
+                cout << "Default Constructor was used." << endl;
+            }
         }
 }
 
