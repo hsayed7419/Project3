@@ -239,13 +239,51 @@ class Customer {
 int main() {
     ifstream in_file;
     Customer temp = new Customer();
+    Customer accounts[MAX_ACCT];
     temp.clear();
     // Opening the file to read the account data from
     in_file.open("account.dat");
     string line;
+    int accountNum = 0;
     int count = 0;
     do {
         in_file >> line >> endl;
-         
+        temp.storeData(line, count);
+        count++;
+        if (count == 4&&temp.isFull()){
+            accounts[accountNum] = new Customer(temp);
+            temp.clear();
+            count = 0;
+            accountNum++;
+        }
+    } while (line);
+    count = 0;
+    char response;
+    while (true) {
+        cout << "Would you like to create another user? (y/n)" << endl;
+        cin >> response;
+        if (response == 'y' || response == 'Y') {
+            temp.clear();
+            cout << "Enter birth date of user" << endl;
+            cin >> line;
+            temp.storeData(line, count);
+            count++;
+            cout << "Enter name" << endl;
+            cin >> line;
+            temp.storeData(line, count);
+            count++;
+            cout << "Enter savings amount" << endl;
+            cin >> line;
+            temp.storeData(line, count);
+            count++;
+            cout << "Enter checking amount" << endl;
+            cin >> line;
+            temp.storeData(line, count);
+            count = 0;
+            accounts[accountNum] = new Customer(temp);
+            accountNum++;
+        } else
+            break;
+    }
     return 0;
 }
