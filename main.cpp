@@ -1,28 +1,25 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <stdlib.h>
 
 #define DEBUG true
 #define MAX_ACCT 20
 
 using namespace std;
 
-/* Used to simplify the stoi call
- * Will not compile in MinGW v 1.7-1.9
- * g++ -std=c++11 my_cpp_code.cpp
+/* Used to simplify the atoi call
  */
 int stringToInt(string data) {
-    size_t *size = 0;
-    return stoi(data, size, 10);
+    const char *c = data.c_str();
+    return atoi(c);
 }
 
-/* Used to simplify the stof call
- * Will not compile in MinGW v 1.7-1.9
- * g++ -std=c++11 my_cpp_code.cpp
+/* Used to simplify the atof call
  */
 float stringToFloat(string data) {
-   size_t *size = 0;
-   return stof(data, size);
+   const char *c = data.c_str();
+   return atof(c);
 }
 
 class Customer {
