@@ -239,6 +239,42 @@ class Customer {
         }
 };
 
+int searchUser(Customer *accounts[]){
+    int hits[MAX_ACCT];
+    string line;
+    for (int i = 0; i < MAX_ACCT; i++){
+        hits[i] = -1;
+    }
+    cout << "Enter the User's First Name" << endl;
+    cin >> line;
+    int numHits = 0;
+    for (int i = 0; i < MAX_ACCT; i++){
+        if (accounts[i]->name.First_name == line){
+            hits[i] = i;
+            numHits++;
+        }
+    }
+    if (numHits > 0) {
+        if (numHits > 1){
+            cout << "Enter the User's Last Name" << endl;
+            cin >> line;
+            for (int i = 0; i < MAX_ACCT; i++){
+                hits[i] = -1;
+            }
+            numHits = 0;
+            for (int i = 0; i < MAX_ACCT; i++){
+                if (accounts[i]->name.Last_name == line){
+                    hits[i] = i;
+                    numHits++;
+                }
+            }
+            if (numHits > 0){
+                for (int i = 0; i < MAX_ACCT; i++){
+                    if (accounts[i]->name.Last_name == line){
+                        
+                    }
+                }
+
 int main() {
     ifstream in_file;
     Customer *temp = new Customer();
