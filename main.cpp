@@ -7,6 +7,24 @@
 
 using namespace std;
 
+/* Used to simplify the stoi call
+ * Will not compile in MinGW v 1.7-1.9
+ * g++ -std=c++11 my_cpp_code.cpp
+ */
+int stringToInt(string data) {
+    size_t *size = 0;
+    return stoi(data, size, 10);
+}
+
+/* Used to simplify the stof call
+ * Will not compile in MinGW v 1.7-1.9
+ * g++ -std=c++11 my_cpp_code.cpp
+ */
+float stringToFloat(string data) {
+   size_t *size = 0;
+   return stof(data, size);
+}
+
 class Customer {
     private:
         struct Birth_date {
@@ -53,13 +71,11 @@ class Customer {
                         }
                         temp.clear();
                         count++;
-                    }
-                    else {
+                    } else {
                         temp += c;
                     }
                 }
                 year = stringToInt(data.substr(yearAt, data.length() -  yearAt));
-                }
             }
         } date;
         
@@ -113,29 +129,24 @@ class Customer {
         } name;
         float Balance_saving;
         float Balance_checking;
-        
-        /* Used to simplify the stoi call
-        * Will not compile in MinGW v 1.7-1.9
-        */
-        int stringToInt(string data) {
-            size_t *size = 0;
-            return stoi(data, size, 10);
-        }
 
-        /* Used to simplify the stof call
-        * Will not compile in MinGW v 1.7-1.9
-        */
-        float stringToFloat(string data) {
-            size_t *size = 0;
-            return stof(data, size);
-        }
     public:
         void clear() {
-            Name.clear();
-            Birth_date.clear();
+            name.clear();
+            date.clear();
             Balance_checking = -1;
             Balance_saving = -1;            
         }
+        
+        bool isFull(){
+            if (name.isFull() && date.isFull() && Balance_checking >= 0 
+                && Balance_saving >= 0) {
+                    return true;
+            } else {
+                return false;
+            }
+        }
+        
         /*  Withdraws <amount> with <type>
             type: 0 is savings, 1 is checking
         */
@@ -211,21 +222,16 @@ class Customer {
                     cout << "Error in Account Structure" << endl;
             }
         }
-        void clear() {
-             Balance_saving = 0;
-             Balance_checking = 0;
-             name.clear();
-             date.clear();
-        }      
-        Customer (Customer customer){
-            date.month = customer.Birth_date.month;
-            date.day = customer.Birth_date.day;
-            date.year = customer.Birth_date.year;
-            name.First_name = customer.Name.First_name;
-            name.Middle_name = customer.Name.Middle_name;
-            name.Last_name = customer.Name.Last_name;
-            Balance_saving = customer.Balance_saving;
-            Balance_checking = customer.Balance_checking;
+        
+        Customer (Customer *customer){
+            date.month = customer->date.month;
+            date.day = customer->date.day;
+            date.year = customer->date.year;
+            name.First_name = customer->name.First_name;
+            name.Middle_name = customer->name.Middle_name;
+            name.Last_name = customer->name.Last_name;
+            Balance_saving = customer->Balance_saving;
+            Balance_checking = customer->Balance_checking;
         }
         
         Customer(){
@@ -234,51 +240,52 @@ class Customer {
                 cout << "Default Constructor was used." << endl;
             }
         }
-}
+};
 
 int main() {
     ifstream in_file;
-    Customer temp = new Customer();
-    Customer accounts[MAX_ACCT];
-    temp.clear();
+    Customer *temp = new Customer();
+    Customer *accounts[MAX_ACCT];
+    temp->clear();
     // Opening the file to read the account data from
     in_file.open("account.dat");
     string line;
     int accountNum = 0;
     int count = 0;
     do {
-        in_file >> line >> endl;
-        temp.storeData(line, count);
+        in_file >> line;
+        temp->storeData(line, count);
         count++;
-        if (count == 4&&temp.isFull()){
+        if (count == 4&&temp->isFull()){
             accounts[accountNum] = new Customer(temp);
-            temp.clear();
+            temp->clear();
             count = 0;
             accountNum++;
         }
-    } while (line);
+        line.clear();
+    } while (line.length() > 0);
     count = 0;
     char response;
     while (true) {
         cout << "Would you like to create another user? (y/n)" << endl;
         cin >> response;
         if (response == 'y' || response == 'Y') {
-            temp.clear();
+            temp->clear();
             cout << "Enter birth date of user" << endl;
             cin >> line;
-            temp.storeData(line, count);
+            temp->storeData(line, count);
             count++;
             cout << "Enter name" << endl;
             cin >> line;
-            temp.storeData(line, count);
+            temp->storeData(line, count);
             count++;
             cout << "Enter savings amount" << endl;
             cin >> line;
-            temp.storeData(line, count);
+            temp->storeData(line, count);
             count++;
             cout << "Enter checking amount" << endl;
             cin >> line;
-            temp.storeData(line, count);
+            temp->storeData(line, count);
             count = 0;
             accounts[accountNum] = new Customer(temp);
             accountNum++;
