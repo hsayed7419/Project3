@@ -84,7 +84,6 @@ class Customer {
                 year = stringToInt(data.substr(yearAt, data.length() -  yearAt));
             }
         } date;
-        
         /* Struct for name, includes first, middle, and last
          * has clear, convert, and isFull functions
          * variable is called: name
@@ -140,7 +139,7 @@ class Customer {
         float Balance_saving;
         float Balance_checking;
 
-    public:
+    public:        
         void clear() {
             name.clear();
             date.clear();
@@ -287,7 +286,8 @@ int searchUser(Customer *accounts[]){
     cout << "Enter the User's First Name" << endl;
     cin >> line;
     int numHits = 0;
-    for (int i = 0; i < MAX_ACCT; i++){
+    int i;
+    for (i = 0; i < MAX_ACCT; i++){
         if (accounts[i]->name.First_name == line){
             numHits++;
         }
@@ -297,7 +297,7 @@ int searchUser(Customer *accounts[]){
         if (numHits > 1){
             cout << "Enter the User's Last Name" << endl;
             cin >> line;
-            for (int i = 0; i < MAX_ACCT; i++){
+            for (i = 0; i < MAX_ACCT; i++){
                 if (accounts[i]->name.Last_name == line){
                     return i;
                 }
@@ -320,6 +320,7 @@ int searchUser(Customer *accounts[]){
 void updateAccount(Customer *customer){
     string line;
     char c;
+    int i;
     customer->check_balance(0);
     customer->check_balance(1);
     cout << "Would you like to deposit  \'0\'," << endl;
@@ -329,7 +330,7 @@ void updateAccount(Customer *customer){
     c = line.at(0);
     switch(c) {
         case '0':
-            int i = -1;
+            i = -1;
             if ((i = checkingOrSaving()) == -1 || i == 2) break;
             else if(i == 0){
                 float amount;
@@ -345,7 +346,7 @@ void updateAccount(Customer *customer){
                 break;
             } else break;
         case '1':
-            int i = -1;
+            i = -1;
             if ((i = checkingOrSaving()) == -1 || i == 2) break;
             else if(i == 0){
                 float amount;
