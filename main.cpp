@@ -239,6 +239,11 @@ class Customer {
         }
 };
 
+/* Prompts user to Enter the first name
+ * if Frst name is unique, returns its position
+ * if First name has duplicate, prompts for Last name
+ * returns Last name position regardless of number of duplicates
+ */
 int searchUser(Customer *accounts[]){
     string line;
     cout << "Enter the User's First Name" << endl;
@@ -268,6 +273,9 @@ int searchUser(Customer *accounts[]){
     }
 }
 
+/* Prompts user for account to modify
+ * default returns error value_comp
+ */
 int checkingOrSaving(){ 
     string line;
     char c;
@@ -299,10 +307,41 @@ void updateAccount(Customer *customer){
     c = line.at(0);
     switch(c) {
         case '0':
-        int i = -1;
-        if ((i = checkingOrSaving()) == -1) break;
-        else if(i == 0){
-            deposit(0) 
+            int i = -1;
+            if ((i = checkingOrSaving()) == -1 || i == 2) break;
+            else if(i == 0){
+                float amount;
+                cout << "Amount: $";
+                cin >> line;
+                customer->deposit(stringToFloat(line), 1);
+                break;
+            } else if(i == 1){
+                float amount;
+                cout << "Amount: $";
+                cin >> line;
+                customer->deposit(stringToFloat(line), 0);
+                break;
+            } else break;
+        case '1':
+            int i = -1;
+            if ((i = checkingOrSaving()) == -1 || i == 2) break;
+            else if(i == 0){
+                float amount;
+                cout << "Amount: $";
+                cin >> line;
+                customer->withdraw(stringToFloat(line), 1);
+                break;
+            } else if(i == 1){
+                float amount;
+                cout << "Amount: $";
+                cin >> line;
+                customer->withdraw(stringToFloat(line), 0);
+                break;
+            } else break;
+        default:
+                break;
+    }
+}
 
 int main() {
     ifstream in_file;
