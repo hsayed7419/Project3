@@ -183,7 +183,7 @@ class Customer {
         /*  Displays <type> to the user
             type: 0 is savings, 1 is checking
         */
-        void deposit(int account_type){
+        void check_balance(int account_type){
             switch (account_type){
                 case 0:
                     cout << "Savings Balance is: $" << Balance_saving << endl;
@@ -268,6 +268,42 @@ int searchUser(Customer *accounts[]){
     }
 }
 
+int checkingOrSaving(){ 
+    string line;
+    char c;
+    cout << "Checking \'0\', savings \'1\', or escape \'2\'" << endl;
+    cin >> line;
+    c = line.at(0);
+    switch(c){
+        case '0':
+        return 0;
+        case '1':
+        return 1;
+        case '2':
+        return 2;
+        default:
+        return -1;
+    }
+}
+
+
+void updateAccount(Customer *customer){
+    string line;
+    char c;
+    customer->check_balance(0);
+    customer->check_balance(1);
+    cout << "Would you like to deposit  \'0\'," << endl;
+    cout << "                  withdraw \'1\'," << endl;
+    cout << "               or continue \'2\'?" << endl; 
+    cin >> line;
+    c = line.at(0);
+    switch(c) {
+        case '0':
+        int i = -1;
+        if ((i = checkingOrSaving()) == -1) break;
+        else if(i == 0){
+            deposit(0) 
+
 int main() {
     ifstream in_file;
     Customer *temp = new Customer();
@@ -293,7 +329,7 @@ int main() {
     count = 0;
     char response;
     while (true) {
-        cout << "Would you like to create another user? (y/n)" << endl;
+        cout << "Would you like to create a user? (y/n)" << endl;
         cin >> response;
         if (response == 'y' || response == 'Y') {
             temp->clear();
