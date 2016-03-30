@@ -3,7 +3,12 @@
 #include <fstream>
 #include <stdlib.h>
 
+// A debug flag used to toggle debugging mode
 #define DEBUG true
+
+/* The maximum number of accounts
+ * If you increase this number, the array of classes is increased
+ */
 #define MAX_ACCT 20
 
 using namespace std;
@@ -24,6 +29,10 @@ float stringToFloat(string data) {
 
 class Customer {
     private:
+        /* Struct for birth date, includes month, day, and year
+         * has clear, convert, and isFull functions
+         * variable is called: date
+         */
         struct Birth_date {
             int month;
             int day;
@@ -76,6 +85,10 @@ class Customer {
             }
         } date;
         
+        /* Struct for name, includes first, middle, and last
+         * has clear, convert, and isFull functions
+         * variable is called: name
+         */
         struct Name {
             string First_name;
             string Middle_name;
@@ -135,6 +148,8 @@ class Customer {
             Balance_saving = -1;            
         }
         
+        // Function inside of the class to test if all the
+        // variables have been set, default values are negative and .clear()
         bool isFull(){
             if (name.isFull() && date.isFull() && Balance_checking >= 0 
                 && Balance_saving >= 0) {
@@ -220,6 +235,7 @@ class Customer {
             }
         }
         
+        // Constructor class for copying one class into another
         Customer (Customer *customer){
             date.month = customer->date.month;
             date.day = customer->date.day;
@@ -231,6 +247,7 @@ class Customer {
             Balance_checking = customer->Balance_checking;
         }
         
+        // Default constructor class used to initialize the temp class
         Customer(){
             clear();
             if (DEBUG) {
@@ -238,6 +255,27 @@ class Customer {
             }
         }
 };
+
+/* Prompts user for account to modify
+ * default returns error value_comp
+ */
+int checkingOrSaving(){ 
+    string line;
+    char c;
+    cout << "Checking \'0\', savings \'1\', or escape \'2\'" << endl;
+    cin >> line;
+    c = line.at(0);
+    switch(c){
+        case '0':
+        return 0;
+        case '1':
+        return 1;
+        case '2':
+        return 2;
+        default:
+        return -1;
+    }
+}
 
 /* Prompts user to Enter the first name
  * if Frst name is unique, returns its position
@@ -272,29 +310,13 @@ int searchUser(Customer *accounts[]){
         return -1;
     }
 }
-
-/* Prompts user for account to modify
- * default returns error value_comp
+/* After prompting the user if they would like to update the searched account,
+ * The user enters data for the account.
+ * Options include: deposit checking
+ *                  deposit savings
+ *                  withdraw checking
+ *                  withdraw savings
  */
-int checkingOrSaving(){ 
-    string line;
-    char c;
-    cout << "Checking \'0\', savings \'1\', or escape \'2\'" << endl;
-    cin >> line;
-    c = line.at(0);
-    switch(c){
-        case '0':
-        return 0;
-        case '1':
-        return 1;
-        case '2':
-        return 2;
-        default:
-        return -1;
-    }
-}
-
-
 void updateAccount(Customer *customer){
     string line;
     char c;
@@ -363,8 +385,34 @@ int main() {
             count = 0;
             accountNum++;
         }
+        
         line.clear();
     } while (line.length() > 0);
+    in_file.close();
+    // File has been read, data is now stored in RAM
+    
+    
+    // Prompts user to edit account via name (withdraw/deposit)
+    while (true) {
+        cout << "Would you like to edit an account? (y/n)" << endl;
+        cin >> line;
+        char c = line.at(0);
+        if (c == 'y' | c == 'Y'){
+            int user = searchUser(accounts);
+            if (user == -1){
+                cout << "Would you like to create a user with that name? (y/n)" << endl;
+                cin >> line;
+                c = line.at(0);
+                if (c == 'y' | c == 'Y') break;
+                else continue;
+            } else {
+                updateAccount(accounts[user]);
+            }
+            
+        } else break;
+    }
+    
+    // Reset variable/declare for adding a user
     count = 0;
     char response;
     while (true) {
@@ -392,6 +440,16 @@ int main() {
             accountNum++;
         } else
             break;
+    }
+    
+    // Save RAM data to ROM
+    ofstream out_file;
+    out_file.open("updated_account.dat");
+    for (int i = 0; i < accountNum; i ++) {
+        out_file << accounts[i]->date.month << " " << accounts[i]->date.day << " " << accounts[i]->date.year << endl;
+        out_file << accounts[i]->name.First_name << " " << accounts[i]->name.Middle_name << " " << accounts[i]->name.Last_name << endl;
+        out_file << accounts[i]->Balance_saving << endl;
+        out_file << accounts[i]->Balance_checking << endl;
     }
     return 0;
 }
