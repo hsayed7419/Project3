@@ -212,6 +212,24 @@ class Customer {
             }
         }
         
+        // Reads private first name
+        string readFirstName() {
+            return name.First_name;
+        }
+        
+        // Reads private last name
+        string readLastName() {
+            return name.Last_name;
+        }
+        
+        // Saves data to file
+        void saveToFile(ofstream& out_file){
+            out_file << date.month << " " << date.day << " " << date.year << endl;
+            out_file << name.First_name << " " << name.Middle_name << " " << name.Last_name << endl;
+            out_file << fixed << Balance_saving << endl;
+            out_file << fixed << Balance_checking << endl;
+        }
+        
         /* Stores data in the format of specification
             default notifies the user that there was an error
          */
@@ -288,7 +306,7 @@ int searchUser(Customer *accounts[]){
     int numHits = 0;
     int i;
     for (i = 0; i < MAX_ACCT; i++){
-        if (accounts[i]->name.First_name == line){
+        if (accounts[i]->readFirstName() == line){
             numHits++;
         }
     }
@@ -298,7 +316,7 @@ int searchUser(Customer *accounts[]){
             cout << "Enter the User's Last Name" << endl;
             cin >> line;
             for (i = 0; i < MAX_ACCT; i++){
-                if (accounts[i]->name.Last_name == line){
+                if (accounts[i]->readLastName() == line){
                     return i;
                 }
             }
@@ -447,10 +465,7 @@ int main() {
     ofstream out_file;
     out_file.open("updated_account.dat");
     for (int i = 0; i < accountNum; i ++) {
-        out_file << accounts[i]->date.month << " " << accounts[i]->date.day << " " << accounts[i]->date.year << endl;
-        out_file << accounts[i]->name.First_name << " " << accounts[i]->name.Middle_name << " " << accounts[i]->name.Last_name << endl;
-        out_file << accounts[i]->Balance_saving << endl;
-        out_file << accounts[i]->Balance_checking << endl;
+        accounts[i]->saveToFile(out_file);
     }
     return 0;
 }
