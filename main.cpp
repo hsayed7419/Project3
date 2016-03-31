@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <stdlib.h>
+#include <iomanip>
 
 // A debug flag used to toggle debugging mode
 #define DEBUG true
@@ -152,8 +153,14 @@ class Customer {
         bool isFull(){
             if (name.isFull() && date.isFull() && Balance_checking >= 0 
                 && Balance_saving >= 0) {
+                    if (DEBUG)
+                        cout << "Is Full is true" << endl;
                     return true;
             } else {
+                if (DEBUG) {
+                    cout << "Name: " << name.isFull() << " Date: " << date.isFull() << endl;
+                    cout << "Checking: " << fixed << Balance_checking << " Savings: " << fixed << Balance_saving << endl;
+                }
                 return false;
             }
         }
@@ -162,17 +169,21 @@ class Customer {
             type: 0 is savings, 1 is checking
         */
         void withdraw(float amount, int account_type){
-            switch (account_type){
-                case 0:
-                    Balance_saving -= amount;
-                    break;
-                case 1:
-                    Balance_checking -= amount;
-                    break;
-                default:
-                    if (DEBUG)
-                        cout << "Wrong account type" << endl;
-                    break;
+            if (amount > 1000000)
+                cout << "!-- WARNING --!" << endl << "  AMOUNT TOO LARGE  " << endl;
+            else {
+                switch (account_type){
+                    case 0:
+                        Balance_saving -= amount;
+                        break;
+                    case 1:
+                        Balance_checking -= amount;
+                        break;
+                    default:
+                        if (DEBUG)
+                            cout << "Wrong account type" << endl;
+                        break;
+                }
             }
         }
         
@@ -180,17 +191,23 @@ class Customer {
             type: 0 is savings, 1 is checking
         */
         void deposit(float amount, int account_type){
-            switch (account_type){
-                case 0:
-                    Balance_saving += amount;
-                    break;
-                case 1:
-                    Balance_checking += amount;
-                    break;
-                default:
-                    if (DEBUG)
-                        cout << "Wrong account type" << endl;
-                    break;
+            if (DEBUG)
+                cout << "Deposits: " << fixed << setprecision(2) << amount << endl;
+            if (amount > 1000000)
+                cout << "!-- WARNING --!" << endl << "  AMOUNT TOO LARGE  " << endl;
+            else {
+                switch (account_type){
+                    case 0:
+                        Balance_saving += amount;
+                        break;
+                    case 1:
+                        Balance_checking += amount;
+                        break;
+                    default:
+                        if (DEBUG)
+                            cout << "Wrong account type" << endl;
+                        break;
+                }
             }
         }
         
@@ -200,10 +217,10 @@ class Customer {
         void check_balance(int account_type){
             switch (account_type){
                 case 0:
-                    cout << "Savings Balance is: $" << Balance_saving << endl;
+                    cout << "Savings Balance is: $" << fixed << setprecision(2) << Balance_saving << endl;
                     break;
                 case 1:
-                    cout << "Checking Balance is: $" << Balance_checking << endl;
+                    cout << "Checking Balance is: $" << fixed << setprecision(2) << Balance_checking << endl;
                     break;
                 default:
                     if (DEBUG)
@@ -225,9 +242,11 @@ class Customer {
         // Saves data to file
         void saveToFile(ofstream& out_file){
             out_file << date.month << " " << date.day << " " << date.year << endl;
+            if (DEBUG)
+                cout << date.month << " " << date.day << " " << date.year << endl;
             out_file << name.First_name << " " << name.Middle_name << " " << name.Last_name << endl;
-            out_file << fixed << Balance_saving << endl;
-            out_file << fixed << Balance_checking << endl;
+            out_file << fixed << setprecision(2) << Balance_saving << endl;
+            out_file << fixed << setprecision(2) << Balance_checking << endl;
         }
         
         /* Stores data in the format of specification
@@ -299,35 +318,50 @@ int checkingOrSaving(){
  * if First name has duplicate, prompts for Last name
  * returns Last name position regardless of number of duplicates
  */
-int searchUser(Customer *accounts[]){
+int searchUser(Customer *accounts[], int numUsers){
     string line;
+    int numHits = 0;
+    int i = 0;
+    int position;
     cout << "Enter the User's First Name" << endl;
     cin >> line;
-    int numHits = 0;
-    int i;
-    for (i = 0; i < MAX_ACCT; i++){
+    if (DEBUG) {
+        cout << "Entered Name" << line << endl;
+        cout << "MAX account" << numUsers << endl;
+        cout << "Garbage i " << i << endl;
+    }
+    
+    for (i = 0; i < numUsers; i++){
         if (accounts[i]->readFirstName() == line){
+            position = i;
             numHits++;
         }
     }
-
+    
+    if (DEBUG){
+        cout << "Num Hits: " << numHits << endl;
+    }
+    
     if (numHits > 0) {
         if (numHits > 1){
             cout << "Enter the User's Last Name" << endl;
             cin >> line;
-            for (i = 0; i < MAX_ACCT; i++){
+            for (i = 0; i < numUsers; i++){
                 if (accounts[i]->readLastName() == line){
                     return i;
                 }
             }
         } else {
-            return i;
+            if (DEBUG)
+                cout << "Position: " << position << endl;
+            return position;
         }
     } else {
         cout << "No such user with that first name" << endl;
         return -1;
     }
 }
+
 /* After prompting the user if they would like to update the searched account,
  * The user enters data for the account.
  * Options include: deposit checking
@@ -351,15 +385,15 @@ void updateAccount(Customer *customer){
             i = -1;
             if ((i = checkingOrSaving()) == -1 || i == 2) break;
             else if(i == 0){
-                float amount;
                 cout << "Amount: $";
-                cin >> line;
+                line.clear();
+                getline(cin, line);
                 customer->deposit(stringToFloat(line), 1);
                 break;
             } else if(i == 1){
-                float amount;
                 cout << "Amount: $";
-                cin >> line;
+                line.clear();
+                getline(cin, line);
                 customer->deposit(stringToFloat(line), 0);
                 break;
             } else break;
@@ -369,12 +403,14 @@ void updateAccount(Customer *customer){
             else if(i == 0){
                 float amount;
                 cout << "Amount: $";
+                line.clear();
                 cin >> line;
                 customer->withdraw(stringToFloat(line), 1);
                 break;
             } else if(i == 1){
                 float amount;
                 cout << "Amount: $";
+                line.clear();
                 cin >> line;
                 customer->withdraw(stringToFloat(line), 0);
                 break;
@@ -395,7 +431,10 @@ int main() {
     int accountNum = 0;
     int count = 0;
     do {
-        in_file >> line;
+        line.clear();
+        getline(in_file, line);
+        if (DEBUG)
+            cout << line << endl;
         temp->storeData(line, count);
         count++;
         if (count == 4&&temp->isFull()){
@@ -404,23 +443,26 @@ int main() {
             count = 0;
             accountNum++;
         }
-        
-        line.clear();
     } while (line.length() > 0);
     in_file.close();
     // File has been read, data is now stored in RAM
     
+    if (DEBUG) {
+        cout << "Number of accounts" << accountNum << endl;
+    }
     
     // Prompts user to edit account via name (withdraw/deposit)
     while (true) {
         cout << "Would you like to edit an account? (y/n)" << endl;
-        cin >> line;
+        getline(cin, line);
         char c = line.at(0);
         if (c == 'y' | c == 'Y'){
-            int user = searchUser(accounts);
+            int user = searchUser(accounts, accountNum);
+            if (DEBUG)
+                    cout << "User position: " << user << endl;
             if (user == -1){
                 cout << "Would you like to create a user with that name? (y/n)" << endl;
-                cin >> line;
+                getline(cin, line);
                 c = line.at(0);
                 if (c == 'y' | c == 'Y') break;
                 else continue;
@@ -467,5 +509,7 @@ int main() {
     for (int i = 0; i < accountNum; i ++) {
         accounts[i]->saveToFile(out_file);
     }
+    
+    out_file.close();
     return 0;
 }
