@@ -386,33 +386,31 @@ void updateAccount(Customer *customer){
             if ((i = checkingOrSaving()) == -1 || i == 2) break;
             else if(i == 0){
                 cout << "Amount: $";
-                line.clear();
-                getline(cin, line);
-                customer->deposit(stringToFloat(line), 1);
+                float amount;
+                cin >> amount;
+                customer->deposit(amount, 1);
                 break;
             } else if(i == 1){
                 cout << "Amount: $";
-                line.clear();
-                getline(cin, line);
-                customer->deposit(stringToFloat(line), 0);
+                float amount;
+                cin >> amount;
+                customer->deposit(amount, 0);
                 break;
             } else break;
         case '1':
             i = -1;
             if ((i = checkingOrSaving()) == -1 || i == 2) break;
             else if(i == 0){
-                float amount;
                 cout << "Amount: $";
-                line.clear();
-                cin >> line;
-                customer->withdraw(stringToFloat(line), 1);
+                float amount;
+                cin >> amount;
+                customer->withdraw(amount, 1);
                 break;
             } else if(i == 1){
-                float amount;
                 cout << "Amount: $";
-                line.clear();
-                cin >> line;
-                customer->withdraw(stringToFloat(line), 0);
+                float amount;
+                cin >> amount;
+                customer->withdraw(amount, 0);
                 break;
             } else break;
         default:
@@ -454,15 +452,24 @@ int main() {
     // Prompts user to edit account via name (withdraw/deposit)
     while (true) {
         cout << "Would you like to edit an account? (y/n)" << endl;
-        getline(cin, line);
+        line.clear();
+        cin.clear();
+        fflush(stdin);
+        cin >> line;
+        if (line.length() == 0){
+            line.clear();
+            cin >> line;
+        }
+        
         char c = line.at(0);
         if (c == 'y' | c == 'Y'){
             int user = searchUser(accounts, accountNum);
             if (DEBUG)
                     cout << "User position: " << user << endl;
+                
             if (user == -1){
                 cout << "Would you like to create a user with that name? (y/n)" << endl;
-                getline(cin, line);
+                cin >> line;
                 c = line.at(0);
                 if (c == 'y' | c == 'Y') break;
                 else continue;
@@ -476,29 +483,44 @@ int main() {
     // Reset variable/declare for adding a user
     count = 0;
     char response;
+    char buffer[50];
     while (true) {
         cout << "Would you like to create a user? (y/n)" << endl;
         cin >> response;
+        
+        // We need to clear stdin from any '\n'
+        cin.clear();
+        fflush(stdin);
         if (response == 'y' || response == 'Y') {
             temp->clear();
             cout << "Enter birth date of user" << endl;
-            cin >> line;
+            cin.getline (buffer,50);
+            line = string(buffer);
             temp->storeData(line, count);
             count++;
             cout << "Enter name" << endl;
-            cin >> line;
+            cin.getline (buffer,50);
+            line = string(buffer);
             temp->storeData(line, count);
             count++;
             cout << "Enter savings amount" << endl;
-            cin >> line;
+            cin.getline (buffer,50);
+            line = string(buffer);
             temp->storeData(line, count);
             count++;
             cout << "Enter checking amount" << endl;
-            cin >> line;
+            cin.getline (buffer,50);
+            line = string(buffer);
             temp->storeData(line, count);
             count = 0;
-            accounts[accountNum] = new Customer(temp);
-            accountNum++;
+            
+            // Only update the array if the information entered is valid
+            if (temp->isFull()) {
+                accounts[accountNum] = new Customer(temp);
+                accountNum++;
+            } else {
+                cout << "Error in entering a new user." << endl;
+            }
         } else
             break;
     }
