@@ -5,7 +5,7 @@
 #include <iomanip>
 
 // A debug flag used to toggle debugging mode
-#define DEBUG true
+#define DEBUG false
 
 /* The maximum number of accounts
  * If you increase this number, the array of classes is increased
